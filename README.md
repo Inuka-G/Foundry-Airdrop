@@ -1,4 +1,4 @@
-# inukaG on behalf of axion technologies/axion chain labs, axion software group
+By inukaG on behalf of axion technologies/axion chain labs, axion software group
 
 # Ethereum Airdrop - Powered by Foundry
 
