@@ -18,6 +18,7 @@ contract MerkleAirdropTest is Test {
     uint256 public AMOUNT_TO_SEND = 25 * 1e18;
     uint256 public AMOUNT_TO_MINT = AMOUNT_TO_SEND * 4;
     address user;
+    address gasPayer;
     uint256 userPrivKey;
 
     function setUp() public {
@@ -31,13 +32,17 @@ contract MerkleAirdropTest is Test {
         // token.mint(token.owner(), AMOUNT_TO_MINT);
         // token.transfer(address(airdrop), AMOUNT_TO_SEND);
         (user, userPrivKey) = makeAddrAndKey("inukaG");
+        gasPayer = makeAddr("gasPayer");
         console.log(user);
     }
 
     function testUsersCanClaim() public {
         uint256 startingBalance = token.balanceOf(user);
-        vm.prank(user);
-        airdrop.claim(user, AMOUNT_TO_SEND, PROOF);
+        bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_SEND);
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivKey, digest);
+        vm.prank(gasPayer);
+        airdrop.claim(user, AMOUNT_TO_SEND, PROOF, v, r, s);
         uint256 endingBalance = token.balanceOf(user);
         console.log(
             "startingBalance------,endingBalance---",
